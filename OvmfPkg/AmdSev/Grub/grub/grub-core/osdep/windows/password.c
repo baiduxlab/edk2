@@ -33,6 +33,10 @@ grub_password_get (char buf[], unsigned buf_size)
   DWORD mode = 0;
   char *ptr;
 
+  if (!buf)
+      /* want prompt */
+      return 1;
+
   grub_refresh ();
   
   GetConsoleMode (hStdin, &mode);
