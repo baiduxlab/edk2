@@ -42,9 +42,8 @@ GRUB_MODULES="
             test
             regexp
             linux
-            linuxefi
             reboot
-            sevsecret
+            efisecret
             "
 basedir=$(dirname -- "$0")
 
@@ -61,13 +60,14 @@ fi
 # different distributions have different names for grub-mkimage, so
 # search all the known ones
 ##
-mkimage=
-for b in grub2-mkimage grub-mkimage; do
-    if which "$b" > /dev/null 2>&1; then
-        mkimage="$b"
-        break
-    fi
-done
+# mkimage=
+# for b in grub2-mkimage grub-mkimage; do
+#     if which "$b" > /dev/null 2>&1; then
+#         mkimage="$b"
+#         break
+#     fi
+# done
+mkimage="${basedir}/grub/grub-mkimage"
 if [ -z "$mkimage" ]; then
     echo "Can't find grub mkimage" >&2
     exit 1
@@ -83,6 +83,7 @@ mcopy -i "${basedir}/disk.fat" -- "${basedir}/grub.cfg" ::grub.cfg
 
 
 ${mkimage} -O x86_64-efi \
+           -d "${basedir}/grub/grub-core" \
            -p '(crypto0)' \
            -c "${basedir}/grub-bootstrap.cfg" \
            -m "${basedir}/disk.fat" \
